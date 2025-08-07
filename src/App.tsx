@@ -5,6 +5,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
 import HabitCard from './components/HabitCard';
 import AddHabitModal from './components/AddHabitModal';
 import MonthlyReview from './components/MonthlyReview';
+import DatePickerModal from './components/DatePickerModal';
 import FloatingCreature from './components/FloatingCreature';
 import { Habit, HabitEntry, MonthlyStats } from './types';
 import { storage } from './utils/storage';
@@ -14,8 +15,10 @@ function App() {
   const [entries, setEntries] = useState<HabitEntry[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [currentDate, setCurrentDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [isViewingCustomDate, setIsViewingCustomDate] = useState(false);
   const [isNewDay, setIsNewDay] = useState(false);
   const [isCreatureHappy, setIsCreatureHappy] = useState(false);
 
@@ -27,7 +30,7 @@ function App() {
   useEffect(() => {
     const checkDateChange = () => {
       const today = format(new Date(), 'yyyy-MM-dd');
-      if (today !== currentDate) {
+      if (today !== currentDate && !isViewingCustomDate) {
         setCurrentDate(today);
         setIsNewDay(true);
         // Hide the new day indicator after 5 seconds
@@ -42,7 +45,7 @@ function App() {
     const interval = setInterval(checkDateChange, 60000);
 
     return () => clearInterval(interval);
-  }, [currentDate]);
+  }, [currentDate, isViewingCustomDate]);
 
   const loadData = () => {
     const savedHabits = storage.getHabits();
@@ -205,6 +208,12 @@ function App() {
     setEditingHabit(null);
   };
 
+  const handleDateSelect = (date: string) => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    setCurrentDate(date);
+    setIsViewingCustomDate(date !== today);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
       {/* Floating background elements */}
@@ -250,11 +259,14 @@ function App() {
               <Sparkles size={32} className="text-white" />
             </div>
             <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-              Habit Tracker
+              Star Tracker
             </h1>
           </motion.div>
           <p className="text-white/90 text-lg mb-6">
-            Earn a star each day you complete your habits! ⭐
+            {currentDate === format(new Date(), 'yyyy-MM-dd') 
+              ? 'Earn a star each day you complete your habits! ⭐'
+              : `Viewing habits for ${format(new Date(currentDate), 'MMMM do, yyyy')} - you can edit past entries! ⭐`
+            }
           </p>
           
           {/* New Day Indicator */}
@@ -273,13 +285,35 @@ function App() {
           </AnimatePresence>
           
           {/* Date Display */}
-          <motion.div
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-2xl text-white font-medium"
-            whileHover={{ scale: 1.05 }}
-          >
-            <Calendar size={20} />
-            {format(new Date(), 'EEEE, MMMM do, yyyy')}
-          </motion.div>
+          <div className="flex items-center gap-3 justify-center">
+            <motion.button
+              onClick={() => setIsDatePickerOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-2xl text-white font-medium cursor-pointer hover:bg-white/30 transition-all"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Calendar size={20} />
+              {format(new Date(currentDate), 'EEEE, MMMM do, yyyy')}
+            </motion.button>
+            
+            {isViewingCustomDate && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                onClick={() => {
+                  setCurrentDate(format(new Date(), 'yyyy-MM-dd'));
+                  setIsViewingCustomDate(false);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 backdrop-blur-sm rounded-xl text-green-200 text-sm font-medium hover:bg-green-500/30 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                Today
+              </motion.button>
+            )}
+          </div>
         </motion.div>
 
         {/* Action Buttons */}
@@ -355,6 +389,7 @@ function App() {
                     onRatingChange={handleRatingChange}
                     onEdit={openEditModal}
                     onDelete={handleDeleteHabit}
+                    currentDate={currentDate}
                   />
                 </motion.div>
               ))}
@@ -376,6 +411,13 @@ function App() {
         onClose={() => setIsReviewModalOpen(false)}
         stats={getMonthlyStats()}
         allTimeStats={getAllTimeStats()}
+      />
+
+      <DatePickerModal
+        isOpen={isDatePickerOpen}
+        onClose={() => setIsDatePickerOpen(false)}
+        onDateSelect={handleDateSelect}
+        currentDate={currentDate}
       />
 
       {/* Floating Action Button */}

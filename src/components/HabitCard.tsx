@@ -10,6 +10,7 @@ interface HabitCardProps {
   onRatingChange: (habitId: string, rating: number) => void;
   onEdit?: (habit: Habit) => void;
   onDelete?: (habitId: string) => void;
+  currentDate?: string;
 }
 
 const HabitCard: React.FC<HabitCardProps> = ({
@@ -17,7 +18,8 @@ const HabitCard: React.FC<HabitCardProps> = ({
   entry,
   onRatingChange,
   onEdit,
-  onDelete
+  onDelete,
+  currentDate
 }) => {
 
   const handleRatingChange = (rating: number) => {
@@ -119,7 +121,9 @@ const HabitCard: React.FC<HabitCardProps> = ({
       {/* Star Rating */}
       <div className="relative z-10 mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-white/90 text-sm font-medium">Today's Progress:</span>
+          <span className="text-white/90 text-sm font-medium">
+            {currentDate ? `${new Date(currentDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} Progress:` : "Today's Progress:"}
+          </span>
           <span className="text-white font-bold text-lg">
             {(entry?.stars || 0) === 1 ? '⭐ Star Earned!' : 'No Star Yet'}
           </span>
