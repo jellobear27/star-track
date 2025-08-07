@@ -4,7 +4,7 @@ A beautiful, game-like habit tracking app with a bubbly UI that makes building g
 
 ## ✨ Features
 
-- **Star Rating System**: Rate your habits from 1-5 stars each day
+- **Star Rating System**: Earn a star (⭐) or no star for each habit daily
 - **Bubbly Game-like UI**: Bright colors and smooth animations for an engaging experience
 - **Monthly Reviews**: Comprehensive charts and statistics to track your progress
 - **Customizable Habits**: Add, edit, and delete habits with custom colors and icons
@@ -14,7 +14,7 @@ A beautiful, game-like habit tracking app with a bubbly UI that makes building g
 ## 🎮 How It Works
 
 1. **Add Habits**: Create new habits with custom names, descriptions, colors, and icons
-2. **Daily Rating**: Each day, give your habits a star rating (1-5 stars)
+2. **Daily Rating**: Each day, earn a star (⭐) or no star for completing your habits
 3. **Track Progress**: See your daily progress and completion rates
 4. **Monthly Review**: Get detailed insights with charts showing your best and worst performing habits
 
@@ -58,22 +58,25 @@ npm start
 ## 📱 Features in Detail
 
 ### Star Rating System
-- Interactive 5-star rating for each habit
-- Visual feedback with animations
+- Binary star system: earn a star (⭐) or no star for each habit
+- Interactive star rating with visual feedback and animations
 - Daily tracking with persistent storage
+- Magical floating creature that celebrates when you earn stars
 
 ### Monthly Review
-- Bar charts showing completion rates
-- Pie charts for habit distribution
+- Candlestick charts showing habit performance
+- Multiple chart types: Top 10, All Habits, and Summary views
+- Pie charts for success rate distribution
 - Top performing habits analysis
-- Habits needing improvement
-- Overall monthly statistics
+- Smart attention tracking for habits missing stars
+- Overall monthly and all-time statistics
 
 ### Customizable UI
 - 8 different color themes for habits
-- 16 different icons to choose from
+- 240+ categorized icons to choose from
 - Smooth animations and transitions
 - Responsive design for all devices
+- Fixed-size habit cards for consistent layout
 
 ## 🎨 Design Philosophy
 
@@ -81,9 +84,11 @@ The app is designed with a **game-like feel** to make habit tracking fun and eng
 
 - **Bright Colors**: Stimulating color palette to keep users motivated
 - **Bubbly Elements**: Rounded corners and floating animations
+- **Magical Creature**: Cute floating creature with blue star eyes that celebrates your achievements
 - **Smooth Transitions**: Framer Motion animations for a polished feel
 - **Visual Feedback**: Immediate response to user interactions
 - **Progress Visualization**: Clear charts and statistics to track improvement
+- **Reward System**: Instant celebration when earning stars
 
 ## 📊 Data Storage
 
@@ -102,6 +107,8 @@ Your data stays private and is never sent to external servers.
 - Social sharing features
 - Dark mode toggle
 - Multiple habit categories
+- Advanced analytics and insights
+- Habit templates and suggestions
 
 ## 🤝 Contributing
 
