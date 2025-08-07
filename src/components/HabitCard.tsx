@@ -27,14 +27,14 @@ const HabitCard: React.FC<HabitCardProps> = ({
   };
 
   const bubbleColors = [
-    'bg-gradient-to-br from-pink-400 to-pink-600',
-    'bg-gradient-to-br from-purple-400 to-purple-600',
+    'bg-gradient-to-br from-cyan-400 to-cyan-600',
     'bg-gradient-to-br from-blue-400 to-blue-600',
-    'bg-gradient-to-br from-green-400 to-green-600',
-    'bg-gradient-to-br from-yellow-400 to-yellow-600',
-    'bg-gradient-to-br from-red-400 to-red-600',
     'bg-gradient-to-br from-indigo-400 to-indigo-600',
-    'bg-gradient-to-br from-teal-400 to-teal-600'
+    'bg-gradient-to-br from-purple-400 to-purple-600',
+    'bg-gradient-to-br from-violet-400 to-violet-600',
+    'bg-gradient-to-br from-slate-400 to-slate-600',
+    'bg-gradient-to-br from-sky-400 to-sky-600',
+    'bg-gradient-to-br from-cyan-500 to-blue-600'
   ];
 
   const colorIndex = parseInt(habit.color) || 0;
@@ -47,32 +47,35 @@ const HabitCard: React.FC<HabitCardProps> = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       whileHover={{ y: -5 }}
-      className={`relative overflow-hidden rounded-3xl p-6 shadow-2xl backdrop-blur-sm border-2 border-white/20 ${bubbleColor} w-80 h-64`}
+      className={`relative overflow-hidden rounded-3xl p-6 shadow-2xl backdrop-blur-sm border border-cyan-400/20 ${bubbleColor} w-80 h-64`}
       style={{
         background: `linear-gradient(135deg, ${habit.color}20, ${habit.color}40)`,
-        boxShadow: `0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.1)`
+        boxShadow: `0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(6, 182, 212, 0.2), 0 0 20px rgba(6, 182, 212, 0.1)`
       }}
     >
       {/* Floating bubbles background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-white/10"
+            className="absolute rounded-full"
             style={{
-              width: Math.random() * 60 + 20,
-              height: Math.random() * 60 + 20,
+              width: Math.random() * 3 + 1,
+              height: Math.random() * 3 + 1,
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
+              background: `rgba(6, 182, 212, ${Math.random() * 0.6 + 0.4})`,
+              boxShadow: `0 0 ${Math.random() * 8 + 4}px rgba(6, 182, 212, ${Math.random() * 0.5 + 0.3})`,
             }}
             animate={{
-              y: [0, -20, 0],
-              opacity: [0.3, 0.7, 0.3],
+              y: [0, -30, 0],
+              opacity: [0.3, 1, 0.3],
+              scale: [0.5, 1.2, 0.5],
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 4 + Math.random() * 3,
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: Math.random() * 3,
             }}
           />
         ))}

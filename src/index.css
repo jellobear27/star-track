@@ -119,4 +119,39 @@ code {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Shooting Star Cursor */
+* {
+  cursor: none;
+}
+
+.shooting-star-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(circle, #ffffff 0%, #06b6d4 40%, #1e40af 80%, transparent 100%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: normal;
+  filter: blur(0.1px);
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 1),
+    0 0 30px rgba(6, 182, 212, 1),
+    0 0 45px rgba(6, 182, 212, 0.8),
+    0 0 60px rgba(6, 182, 212, 0.6),
+    0 0 75px rgba(6, 182, 212, 0.4);
+}
+
+/* Hide cursor on interactive elements */
+button, input, textarea, select, a, [role="button"] {
+  cursor: none;
+}
+
+/* Show default cursor on interactive elements when needed */
+button:hover, input:hover, textarea:hover, select:hover, a:hover, [role="button"]:hover {
+  cursor: none;
 } 

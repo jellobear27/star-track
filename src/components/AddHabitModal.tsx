@@ -22,14 +22,14 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
   const [selectedIcon, setSelectedIcon] = useState(editingHabit?.icon || '💪');
 
   const colors = [
-    { id: '0', name: 'Pink', class: 'bg-gradient-to-br from-pink-400 to-pink-600' },
-    { id: '1', name: 'Purple', class: 'bg-gradient-to-br from-purple-400 to-purple-600' },
-    { id: '2', name: 'Blue', class: 'bg-gradient-to-br from-blue-400 to-blue-600' },
-    { id: '3', name: 'Green', class: 'bg-gradient-to-br from-green-400 to-green-600' },
-    { id: '4', name: 'Yellow', class: 'bg-gradient-to-br from-yellow-400 to-yellow-600' },
-    { id: '5', name: 'Red', class: 'bg-gradient-to-br from-red-400 to-red-600' },
-    { id: '6', name: 'Indigo', class: 'bg-gradient-to-br from-indigo-400 to-indigo-600' },
-    { id: '7', name: 'Teal', class: 'bg-gradient-to-br from-teal-400 to-teal-600' }
+    { id: '0', name: 'Cyan', class: 'bg-gradient-to-br from-cyan-400 to-cyan-600' },
+    { id: '1', name: 'Blue', class: 'bg-gradient-to-br from-blue-400 to-blue-600' },
+    { id: '2', name: 'Indigo', class: 'bg-gradient-to-br from-indigo-400 to-indigo-600' },
+    { id: '3', name: 'Purple', class: 'bg-gradient-to-br from-purple-400 to-purple-600' },
+    { id: '4', name: 'Violet', class: 'bg-gradient-to-br from-violet-400 to-violet-600' },
+    { id: '5', name: 'Slate', class: 'bg-gradient-to-br from-slate-400 to-slate-600' },
+    { id: '6', name: 'Sky', class: 'bg-gradient-to-br from-sky-400 to-sky-600' },
+    { id: '7', name: 'Cosmic', class: 'bg-gradient-to-br from-cyan-500 to-blue-600' }
   ];
 
   const icons = [
@@ -118,7 +118,7 @@ const AddHabitModal: React.FC<AddHabitModalProps> = ({
             className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
           >
             {/* Header */}
-            <div className="relative p-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <div className="relative p-6 bg-gradient-to-r from-cyan-500 to-blue-600 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <motion.div
