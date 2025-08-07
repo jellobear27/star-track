@@ -2,7 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Calendar, TrendingUp, Sparkles, Star } from 'lucide-react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import HabitCard from './components/HabitCard';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import SortableHabitCard from './components/SortableHabitCard';
 import AddHabitModal from './components/AddHabitModal';
 import MonthlyReview from './components/MonthlyReview';
 import DatePickerModal from './components/DatePickerModal';
@@ -50,7 +65,14 @@ function App() {
   const loadData = () => {
     const savedHabits = storage.getHabits();
     const savedEntries = storage.getEntries();
-    setHabits(savedHabits);
+    
+    // Add order field to existing habits that don't have it
+    const habitsWithOrder = savedHabits.map((habit, index) => ({
+      ...habit,
+      order: habit.order !== undefined ? habit.order : index
+    }));
+    
+    setHabits(habitsWithOrder);
     setEntries(savedEntries);
   };
 
@@ -64,16 +86,17 @@ function App() {
     setEntries(newEntries);
   };
 
-  const handleAddHabit = (habitData: Omit<Habit, 'id' | 'createdAt'>) => {
+  const handleAddHabit = (habitData: Omit<Habit, 'id' | 'createdAt' | 'order'>) => {
     const newHabit: Habit = {
       ...habitData,
       id: Date.now().toString(),
-      createdAt: new Date()
+      createdAt: new Date(),
+      order: habits.length
     };
     saveHabits([...habits, newHabit]);
   };
 
-  const handleEditHabit = (habitData: Omit<Habit, 'id' | 'createdAt'>) => {
+  const handleEditHabit = (habitData: Omit<Habit, 'id' | 'createdAt' | 'order'>) => {
     if (editingHabit) {
       const updatedHabits = habits.map(habit =>
         habit.id === editingHabit.id
@@ -214,40 +237,36 @@ function App() {
     setIsViewingCustomDate(date !== today);
   };
 
-  // Shooting star cursor effect
-  useEffect(() => {
-    const cursor = document.createElement('div');
-    cursor.className = 'shooting-star-cursor';
-    document.body.appendChild(cursor);
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
+  // Handle drag end
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-    const updateCursor = () => {
-      // Normal cursor speed - direct movement
-      cursorX = mouseX;
-      cursorY = mouseY;
+    if (active.id !== over?.id) {
+      const oldIndex = habits.findIndex(habit => habit.id === active.id);
+      const newIndex = habits.findIndex(habit => habit.id === over?.id);
 
-      cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-      
-      requestAnimationFrame(updateCursor);
-    };
+      const reorderedHabits = arrayMove(habits, oldIndex, newIndex).map((habit, index) => ({
+        ...habit,
+        order: index
+      }));
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
+      saveHabits(reorderedHabits);
+    }
+  };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    updateCursor();
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.body.removeChild(cursor);
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
@@ -304,7 +323,7 @@ function App() {
 
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 py-8">
-                {/* Header */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -419,23 +438,23 @@ function App() {
             }
           </p>
         </div>
-        
-        {/* New Day Indicator */}
-        <AnimatePresence>
-          {isNewDay && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -20 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 backdrop-blur-sm rounded-xl text-green-200 text-sm font-medium mb-4"
-            >
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-              New day - fresh start for your habits!
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Date Display */}
+          
+          {/* New Day Indicator */}
+          <AnimatePresence>
+            {isNewDay && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: -20 }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/20 backdrop-blur-sm rounded-xl text-green-200 text-sm font-medium mb-4"
+              >
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                New day - fresh start for your habits!
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          {/* Date Display */}
         <div className="flex items-center gap-3 justify-center mb-8">
           <motion.button
             onClick={() => setIsDatePickerOpen(true)}
@@ -444,7 +463,7 @@ function App() {
             whileTap={{ scale: 0.95 }}
           >
             <Calendar size={20} />
-            {format(new Date(currentDate), 'EEEE, MMMM do, yyyy')}
+            {format(new Date(), 'EEEE, MMMM do, yyyy')}
           </motion.button>
           
           {isViewingCustomDate && (
@@ -520,31 +539,38 @@ function App() {
             </motion.button>
           </motion.div>
         ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={habits.map(habit => habit.id)}
+              strategy={verticalListSortingStrategy}
+            >
           <motion.div
             layout
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             <AnimatePresence>
-              {habits.map((habit, index) => (
-                <motion.div
+                  {habits
+                    .sort((a, b) => a.order - b.order)
+                    .map((habit, index) => (
+                    <SortableHabitCard
                   key={habit.id}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <HabitCard
                     habit={habit}
                     entry={getEntryForHabit(habit.id)}
                     onRatingChange={handleRatingChange}
                     onEdit={openEditModal}
                     onDelete={handleDeleteHabit}
-                    currentDate={currentDate}
+                      currentDate={currentDate}
+                      index={index}
                   />
-                </motion.div>
               ))}
             </AnimatePresence>
           </motion.div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 

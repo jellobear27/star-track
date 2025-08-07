@@ -5,6 +5,7 @@ export interface Habit {
   color: string;
   icon: string;
   createdAt: Date;
+  order: number;
 }
 
 export interface HabitEntry {

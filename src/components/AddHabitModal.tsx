@@ -6,7 +6,7 @@ import { Habit } from '../types';
 interface AddHabitModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (habit: Omit<Habit, 'id' | 'createdAt'>) => void;
+  onAdd: (habit: Omit<Habit, 'id' | 'createdAt' | 'order'>) => void;
   editingHabit?: Habit | null;
 }
 
